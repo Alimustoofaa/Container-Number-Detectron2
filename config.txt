@@ -1,0 +1,25 @@
+[Easy OCR Horizontal]
+allowList = '0123456789ABCDEFGHJKLMNOPQRSTUVWXYZ'
+detail = 1
+batchSize = 5
+textThreshold = 0.8
+lowText = 0.4
+linkThreshold = 0.8
+
+[Easy OCR Vertical]
+allowList = '0123456789ABCDEFGHJKLMNOPQRSTUVWXYZ'
+detail = 1
+decoder = wordbeamsearch
+beamWidth = 6
+batchSize = 1
+textThreshold = 0.8
+lowText = 0.5
+linkThreshold = 0.8
+slopeThs = 0.2
+minSize = 1
+
+[Tesseract OCR]
+whitelist = 0123456789ABCDEFGHJKLMNOPQRSTUVWXYZ
+
+[Category Container]
+category = ABCDEFGHJKLMNOPQRSTUVWXYZ
