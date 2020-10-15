@@ -23,3 +23,6 @@ whitelist = 0123456789ABCDEFGHJKLMNOPQRSTUVWXYZ
 
 [Category Container]
 category = ABCDEFGHJKLMNOPQRSTUVWXYZ
+
+[Resize Image]
+scalePercent = 200

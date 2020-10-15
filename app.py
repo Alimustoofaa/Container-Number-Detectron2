@@ -1,22 +1,27 @@
 import cv2
 
 # Function proces container number
-import process.detectContainerNumber
-from process.detectContainerNumber import predicContainerNumber
-from process.cropImage import cropImage
-from process.preProcessImage import processImage
 from process.easyOcr import ocrEasyOcr
+from process.cropImage import cropImage
+from process.resizeImage import resizeImage
+from process.getContrast import getContrast
 from process.tesseractOcr import tesseractOcr
+from process.preProcessImage import processImage
+from process.detectContainerNumber import predicContainerNumber
 
 def processing(image):
     resultContainerNumber = {}
     result = predicContainerNumber(image)
     if result != '':
         imageCropped = cropImage(result, image)
-        preProcessedImage = processImage(imageCropped)
-        image = preProcessedImage.copy()
-        cv2.imwrite('preprocessing.jpg', preProcessedImage)
-        cv2.imwrite('prediction.jpg', imageCropped)
+        resizedImage = resizeImage(imageCropped)
+        contrast = getContrast(resizedImage)
+        if contrast > 13:
+            preProcessedImage = processImage(imageCropped)
+            image = preProcessedImage.copy()
+        else:
+            image = resizedImage.copy()
+        
         # Get Vertical or Horizontal image
         height = image.shape[0]
         width = image.shape[1]
@@ -28,7 +33,7 @@ def processing(image):
             resultTesseract, cofidenceTesseract = tesseractOcr(image)
             resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
 
-        elif height > width:
+        else:
             # easyOcr
             resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='vertical')
             resultContainerNumber['easyOcr'] = [resultEasyOcr, confidenceEasyOcr]

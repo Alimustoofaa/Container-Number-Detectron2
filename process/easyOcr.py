@@ -77,7 +77,7 @@ def ocrEasyOcr(image, rotate='horizontal'):
     else:
         result = EasyOcr.processOcr(image)
 
-    if len(result[1]) != 0:
+    if len(result) != 0:
         textConfArr = EasyOcr.extractText(result)
         try:
             containerNumber, confidenceLevel = filterText(textConfArr)
