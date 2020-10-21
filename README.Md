@@ -21,3 +21,12 @@
 
 # Run
     $ python server.py
+
+
+# How to install with Docker?
+## Download model and move to models/ repository
+    $ https://drive.google.com/file/d/1-0IzZXcDo-3n7f01qw5g2YszSsWn7OE1/view?usp=sharing
+## Build Dockefile
+    $ docker build --tag named .
+## Run
+    $ docker run --name named -p 5002:5002 named
