@@ -139,6 +139,3 @@ cython_debug/
 
 # Models
 models/
-
-# Upload Image
-images/
