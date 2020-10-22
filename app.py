@@ -1,4 +1,6 @@
 import cv2
+import configparser
+import sys
 
 # Function proces container number
 from process.easyOcr import ocrEasyOcr
@@ -9,14 +11,27 @@ from process.tesseractOcr import tesseractOcr
 from process.preProcessImage import processImage
 from process.detectContainerNumber import predicContainerNumber
 
+try:
+    config = configparser.ConfigParser()
+    config.read_file(open(r'config.txt'))
+except OSError as error:
+    print(error.strerror)
+    sys.exit()
+
+scalePercent = int(config.get('Resize Image', 'scalePercent'))
+minContrast  = int(config.get('Min Contrast', 'minContrast'))
+
 def processing(image):
     resultContainerNumber = {}
     result = predicContainerNumber(image)
     if result != '':
         imageCropped = cropImage(result, image)
-        resizedImage = resizeImage(imageCropped)
+        if imageCropped.shape[1] < scalePercent:
+            resizedImage = resizeImage(imageCropped)
+        else:
+            resizedImage = imageCropped.copy()
         contrast = getContrast(resizedImage)
-        if contrast > 13:
+        if contrast > minContrast:
             preProcessedImage = processImage(imageCropped)
             image = preProcessedImage.copy()
         else:

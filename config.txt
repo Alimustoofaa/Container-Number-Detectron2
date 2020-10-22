@@ -26,3 +26,6 @@ category = ABCDEFGHJKLMNOPQRSTUVWXYZ
 
 [Resize Image]
 scalePercent = 200
+
+[Min Contrast]
+minContrast = 13
