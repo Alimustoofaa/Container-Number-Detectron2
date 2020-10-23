@@ -29,6 +29,12 @@ def filterText(textArr):
         bool = "serial"
         if char.isnumeric() == False:
           bool = "unknown"
+    if len(word) == 1:
+      for char in word:
+        bool = "digit"
+        if char.isnumeric() == False:
+          bool = "unknown"
+
     meaning.append(bool)
     text.append(word)
     confidence.append(conf)
@@ -45,6 +51,15 @@ def filterText(textArr):
   try:
     filter = text[meaning.index("serial")]
     confFilter = confidence[meaning.index("serial")]
+
+    containerNumberArr.append(filter)
+    confidenceArr.append(confFilter)
+  except ValueError:
+    None
+  
+  try:
+    filter = text[meaning.index("digit")]
+    confFilter = confidence[meaning.index("digit")]
 
     containerNumberArr.append(filter)
     confidenceArr.append(confFilter)

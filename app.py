@@ -10,6 +10,7 @@ from process.getContrast import getContrast
 from process.tesseractOcr import tesseractOcr
 from process.preProcessImage import processImage
 from process.detectContainerNumber import predicContainerNumber
+from process.checkDigit import checkDigitNum
 
 try:
     config = configparser.ConfigParser()
@@ -43,18 +44,29 @@ def processing(image):
         if height < width:
             # easyOcr
             resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='horizontal')
-            resultContainerNumber['easyOcr'] = [resultEasyOcr, confidenceEasyOcr]
-            # tesseractOcr
-            resultTesseract, cofidenceTesseract = tesseractOcr(image)
-            resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
+            # check digit
+            checked = checkDigitNum(resultEasyOcr)
+            resultContainerNumber['easyOcr'] = {
+                'Container Number': resultEasyOcr,
+                'Confidence Level ': confidenceEasyOcr,
+                'Check digit':checked
+            }
+            # # tesseractOcr
+            # resultTesseract, cofidenceTesseract = tesseractOcr(image)
+            # resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
 
         else:
             # easyOcr
             resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='vertical')
-            resultContainerNumber['easyOcr'] = [resultEasyOcr, confidenceEasyOcr]
+            checked = checkDigitNum(resultEasyOcr)
+            resultContainerNumber['easyOcr'] = {
+                'Container Number': resultEasyOcr,
+                'Confidence Level ': confidenceEasyOcr,
+                'Check digit':checked
+            }
             # tesseractOcr
-            resultTesseract, cofidenceTesseract = tesseractOcr(image, psm=6)
-            resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
+            # resultTesseract, cofidenceTesseract = tesseractOcr(image, psm=6)
+            # resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
         
         return resultContainerNumber
     else:
