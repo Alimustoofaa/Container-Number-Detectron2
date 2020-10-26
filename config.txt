@@ -29,3 +29,7 @@ scalePercent = 200
 
 [Min Contrast]
 minContrast = 13
+
+[Data Container]
+nameFile = data_container.csv
+header = id, container_number

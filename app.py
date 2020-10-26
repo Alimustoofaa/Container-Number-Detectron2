@@ -11,6 +11,7 @@ from process.tesseractOcr import tesseractOcr
 from process.preProcessImage import processImage
 from process.detectContainerNumber import predicContainerNumber
 from process.checkDigit import checkDigitNum
+from process.stringDistance import getStringDistance
 
 try:
     config = configparser.ConfigParser()
@@ -45,9 +46,10 @@ def processing(image):
             # easyOcr
             resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='horizontal')
             # check digit
-            checked = checkDigitNum(resultEasyOcr)
+            getStrDist = getStringDistance(resultEasyOcr)
+            checked = checkDigitNum(getStrDist)
             resultContainerNumber['easyOcr'] = {
-                'Container Number': resultEasyOcr,
+                'Container Number': getStrDist,
                 'Confidence Level ': confidenceEasyOcr,
                 'Check digit':checked
             }
