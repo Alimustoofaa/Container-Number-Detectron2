@@ -30,3 +30,6 @@
     $ docker build --tag named .
 ## Run
     $ docker run --name named -p 5002:5002 named
+
+# How to start?
+## Please edit Path Image in confix.text, change to your path

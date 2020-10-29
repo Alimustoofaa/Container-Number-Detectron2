@@ -33,6 +33,9 @@ minContrast = 13
 [Min Confidence]
 minConfidence = 0.2
 
+[Path Image]
+pathImage = /home/prio/Downloads/HALOTEC
+
 [Data Container]
 nameFile = data_container.csv
 header = id, container_number
