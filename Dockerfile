@@ -24,7 +24,7 @@ RUN python -m pip install git+git://github.com/jaidedai/easyocr.git
 RUN apt-get update && apt-get -y --no-install-recommends install tesseract-ocr 
 RUN python -m pip install pytesseract
 
-RUN python -m pip install configparser numpy flask
+RUN python -m pip install configparser numpy flask similarity
 
 COPY . /app
 WORKDIR /app

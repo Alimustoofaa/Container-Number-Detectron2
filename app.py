@@ -48,9 +48,9 @@ def processing(image):
             # check digit
             getStrDist = getStringDistance(resultEasyOcr)
             checked = checkDigitNum(getStrDist)
-            resultContainerNumber['easyOcr'] = {
-                'Container Number': getStrDist,
-                'Confidence Level ': confidenceEasyOcr,
+            resultContainerNumber = {
+                'Container number': getStrDist,
+                'Confidence level': confidenceEasyOcr,
                 'Check digit':checked
             }
             # # tesseractOcr
@@ -61,9 +61,9 @@ def processing(image):
             # easyOcr
             resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='vertical')
             checked = checkDigitNum(resultEasyOcr)
-            resultContainerNumber['easyOcr'] = {
-                'Container Number': resultEasyOcr,
-                'Confidence Level ': confidenceEasyOcr,
+            resultContainerNumber = {
+                'Container number': resultEasyOcr,
+                'Confidence level ': confidenceEasyOcr,
                 'Check digit':checked
             }
             # tesseractOcr

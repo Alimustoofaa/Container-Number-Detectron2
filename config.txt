@@ -30,6 +30,9 @@ scalePercent = 200
 [Min Contrast]
 minContrast = 13
 
+[Min Confidence]
+minConfidence = 0.2
+
 [Data Container]
 nameFile = data_container.csv
 header = id, container_number
