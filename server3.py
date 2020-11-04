@@ -32,8 +32,8 @@ def process(filename):
     else:
         return None
 
-@app.route("/name", methods=["POST"])
-def setName():
+@app.route("/image", methods=["POST"])
+def postImageName():
     if request.method=='POST':
         try:
             imageName = request.form['image-name']
