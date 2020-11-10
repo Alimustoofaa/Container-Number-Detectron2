@@ -29,6 +29,8 @@ RUN python -m pip install configparser numpy flask strsim python-stdnum
 COPY . /app
 WORKDIR /app
 
+RUN mkdir /images
+
 EXPOSE 5003
 ENTRYPOINT [ "python3" ] 
 CMD [ "server.py"]
