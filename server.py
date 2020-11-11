@@ -1,5 +1,6 @@
 import os
 import cv2
+import pytz
 from glob import glob
 from app import processing
 from datetime import datetime
@@ -7,6 +8,7 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
+IST = pytz.timezone('Asia/Jakarta')
 
 def getPathImage(truckId):
 	'''
@@ -69,7 +71,7 @@ def postTruckId():
 				return jsonify({"error": "No container number"}), 400
 			elif len(result) == 0:
 				return jsonify({"error": "No image in path"}), 400
-			return jsonify({"success":"", "time": datetime.now(), "results": result})
+			return jsonify({"success":"", "time": datetime.now(IST), "results": result})
 		except KeyError as e:
 			return jsonify({"error": "Invalid mame"}), 400
 
