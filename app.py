@@ -1,7 +1,6 @@
 import cv2
 import configparser
 import sys
-
 # Function proces container number
 from process.easyOcr import ocrEasyOcr
 from process.cropImage import cropImage
@@ -14,64 +13,66 @@ from process.checkDigit import checkDigitNum
 from process.stringDistance import getStringDistance
 
 try:
-    config = configparser.ConfigParser()
-    config.read_file(open(r'config.txt'))
+	config = configparser.ConfigParser()
+	config.read_file(open(r'config.txt'))
 except OSError as error:
-    print(error.strerror)
-    sys.exit()
+	print(error.strerror)
+	sys.exit()
 
 scalePercent = int(config.get('Resize Image', 'scalePercent'))
 minContrast  = int(config.get('Min Contrast', 'minContrast'))
 
-def processing(image):
-    resultContainerNumber = {}
-    result = predicContainerNumber(image)
-    if result != '':
-        imageCropped = cropImage(result, image)
-        if imageCropped.shape[1] < scalePercent:
-            resizedImage = resizeImage(imageCropped)
-        else:
-            resizedImage = imageCropped.copy()
-        contrast = getContrast(resizedImage)
-        if contrast > minContrast:
-            preProcessedImage = processImage(imageCropped)
-            image = preProcessedImage.copy()
-        else:
-            image = resizedImage.copy()
-        
-        # Get Vertical or Horizontal image
-        height = image.shape[0]
-        width = image.shape[1]
-        if height < width:
-            # easyOcr
-            resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='horizontal')
-            # check digit
-            getStrDist = getStringDistance(resultEasyOcr)
-            checked = checkDigitNum(getStrDist)
-            resultContainerNumber = {
-                'Container number': resultEasyOcr,
-                'String distance': getStrDist,
-                'Confidence level': confidenceEasyOcr,
-                'Check digit':checked
-            }
-            # tesseractOcr
-            # resultTesseract, cofidenceTesseract = tesseractOcr(image)
-            # resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
+def processing(image, imageName, posCam):
+	resultContainerNumber = {}
+	result = predicContainerNumber(image)
+	if result != '':
+		imageCropped = cropImage(result, image)
+		if imageCropped.shape[1] < scalePercent:
+			resizedImage = resizeImage(imageCropped)
+		else:
+			resizedImage = imageCropped.copy()
+		contrast = getContrast(resizedImage)
+		if contrast > minContrast:
+			preProcessedImage = processImage(imageCropped)
+			image = preProcessedImage.copy()
+		else:
+			image = resizedImage.copy()
+		
+		# Get Vertical or Horizontal image
+		height = image.shape[0]
+		width = image.shape[1]
+		if height < width:
+			resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='horizontal')
+			getStrDist = getStringDistance(resultEasyOcr) if resultEasyOcr is not None else None
+			checked = checkDigitNum(getStrDist) if resultEasyOcr is not None else None
+			resultContainerNumber = {
+				'Position cam' : posCam,
+				'Image name' : imageName,
+				'Container number': resultEasyOcr,
+				'String distance': getStrDist,
+				'Confidence level': confidenceEasyOcr,
+				'Check digit':checked
+			}
+			# tesseractOcr
+			# resultTesseract, cofidenceTesseract = tesseractOcr(image)
+			# resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
 
-        else:
-            # easyOcr
-            resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='vertical')
-            checked = checkDigitNum(resultEasyOcr)
-            resultContainerNumber = {
-                'Container number': resultEasyOcr,
-                'String distance': getStrDist,
-                'Confidence level ': confidenceEasyOcr,
-                'Check digit':checked
-            }
-            # tesseractOcr
-            # resultTesseract, cofidenceTesseract = tesseractOcr(image, psm=6)
-            # resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
-        
-        return resultContainerNumber
-    else:
-        return 'No Container Number detected'
+		else:
+			resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='vertical')
+			getStrDist = getStringDistance(resultEasyOcr) if resultEasyOcr is not None else None
+			checked = checkDigitNum(resultEasyOcr) if resultEasyOcr is not None else None
+			resultContainerNumber = {
+				'Position cam' : posCam,
+				'Image name' : imageName,
+				'Container number': resultEasyOcr,
+				'String distance': getStrDist,
+				'Confidence level ': confidenceEasyOcr,
+				'Check digit':checked
+			}
+			# tesseractOcr
+			# resultTesseract, cofidenceTesseract = tesseractOcr(image, psm=6)
+			# resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]a
+		
+		return resultContainerNumber
+	else:
+		return 'No Container Number detected'
