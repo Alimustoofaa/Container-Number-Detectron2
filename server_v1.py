@@ -1,75 +1,85 @@
 import os
 import cv2
-from glob import glob
+import sys
+import configparser
 from app import processing
-from datetime import datetime
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
-app.config['JSON_SORT_KEYS'] = False
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
-def getPathImage(truckId):
+try:
+	config = configparser.ConfigParser()
+	config.read_file(open(r'config.txt'))
+except OSError as error:
+	print(error.strerror)
+	sys.exit()
+
+path  = config.get('Path Image', 'pathImage')
+numGate = config.get('Number Gate', 'gate')
+
+def allowedFile(filename):
+	try:
+		namefile = filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+		return namefile
+	except IndexError as error:
+		return None
+
+def getPathImage(filename, pos=10):
 	'''
-		pattren path image = C:\images\year\month\day\truckId+posCam.jpg
+		pattren path image = C:\images\year\month\day\trukid.jpg
 	'''
-	year 		= truckId[0:2]
-	month 		= truckId[2:4]
-	day 		= truckId[4:6]
+	gate 		= "0"+numGate if len(numGate) == 1 else numGate
+	# posCam 		= "0"+str(pos) if len(str(pos)) == 1 else str(pos)
+	charName 	= os.path.splitext(filename)[0]
+	year 		= charName[0:2]
+	month 		= charName[2:4]
+	day 		= charName[4:6]
 
-	pathImage = os.path.join(('images/20{year}/{mm}/{dd}/{truckId}*.jpg'
-				.format(year=year, mm=month, dd=day, truckId=truckId)))
-	return pathImage
+	# if posCam == '10':
+	# 	pathImage = os.path.join(('images/20{year}/{mm}/{dd}/{trukId}'
+	# 				.format(year=year, mm=month, dd=day, trukId=filename)))
+	# 	return pathImage
+	# elif posCam == '01':
+	# 	filename = charName[:17]+str(posCam)
+	# 	pathImage = os.path.join(('images/20{year}/{mm}/{dd}/{trukId}.jpg'
+	# 				.format(year=year, mm=month, dd=day, trukId=filename)))
+	# 	return pathImage
 
-def process(img, posCam):
-	imageName = os.path.split(img)[-1]
-	image = cv2.imread(img)
-	result = processing(image, imageName, posCam)
-	return result if type(result) == dict else {'error': result}
+	pathImage = os.path.join(('images/20{year}/{mm}/{dd}/{trukId}'
+					.format(year=year, mm=month, dd=day, trukId=filename)))
 
-def switchProcess(pathImg, posCam):
-	if posCam == '10':
-		return process(pathImg, posCam)
-	elif posCam == '01':
-		return process(pathImg, posCam)
-	elif posCam == '02':
-		return process(pathImg, posCam)
-	else:
-		None
-
-def getImageForProcessing(truckId):
-	imgPath = getPathImage(truckId)
-	resultArr = []
-	for img in glob(imgPath):
-		imgName = os.path.split(img)[-1]
-		posCam = imgName[17:19]
-		result = switchProcess(img, posCam)
-		if result is not None:
-			if result.get('Container number'):
-				resultArr.append(result)
-	if len(resultArr) != 0:
-		confArr = [i['Confidence level'] for i in resultArr]
-		keyMax = max(range(len(confArr)), key=confArr.__getitem__)
-		return resultArr[keyMax]
+def process(filename, pos=10):
+	imgPath = getPathImage(filename, pos=pos)
+	image = cv2.imread(imgPath)
+	if image is not None:
+		result = processing(image)
+		return result
 	else:
 		return None
 
-@app.route("/truckid", methods=["POST"])
-def postTruckId():
+@app.route("/image", methods=["POST"])
+def postImageName():
 	if request.method=='POST':
 		try:
-			truckId = request.form['truck-id']
-			if truckId.isnumeric() == False:
-				return jsonify({"error": "String image name not numeric"}), 400
-			elif len(truckId) != 17:
-				return jsonify({"error": "String image name not valid"}), 400
+			imageName = request.form['image-name']
+			allowedCheck = allowedFile(imageName)
+			if allowedCheck:
+				charName = os.path.splitext(imageName)[0]
+				if charName.isnumeric() == False:
+					return jsonify({"error": "String image name not numeric"}), 400
+				elif len(charName) != 17:
+					return jsonify({"error": "String image name not valid"}), 400
 				
-			# Processing container 
-			result = getImageForProcessing(truckId)
-			if result is None:
-				return jsonify({"error": "No container number"}), 400
-			elif len(result) == 0:
-				return jsonify({"error": "No image in path"}), 400
-			return jsonify({"success":"", "time": datetime.now(), "results": result})
+				# Processing container 
+				result = process(imageName)
+				if result is None:
+					return jsonify({"error": "No image in path"}), 400
+				return jsonify(result)
+			elif allowedCheck is None:
+				return jsonify({"error": "String not fromat file"}), 400
+			else:
+				return jsonify({"error": "Invalid string filename"}), 400
 		except KeyError as e:
 			return jsonify({"error": "Invalid mame"}), 400
 
