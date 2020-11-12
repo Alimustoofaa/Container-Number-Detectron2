@@ -66,7 +66,7 @@ def processing(image, imageName, posCam):
 				'Image name' : imageName,
 				'Container number': resultEasyOcr,
 				'String distance': getStrDist,
-				'Confidence level ': confidenceEasyOcr,
+				'Confidence level': confidenceEasyOcr,
 				'Check digit':checked
 			}
 			# tesseractOcr
