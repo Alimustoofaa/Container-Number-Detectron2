@@ -1,6 +1,6 @@
 import cv2
-import configparser
 import sys
+import configparser
 # Function proces container number
 from process.easyOcr import ocrEasyOcr
 from process.cropImage import cropImage
@@ -34,6 +34,11 @@ def getDictResult(posCam, imageName, conNum=None, strDist=None, conLevel=None, c
 	return dictResult
 
 def processing(image, imageName, posCam):
+	'''
+		import app log from server
+	'''
+	from server import app
+	
 	resultContainerNumber = {}
 	result = predicContainerNumber(image)
 	imageCropped = cropImage(result, image) if result != '' else image.copy()
@@ -50,8 +55,6 @@ def processing(image, imageName, posCam):
 	width = image.shape[1]
 	if height < width:
 		resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='horizontal')
-		# log
-		from server import app
 		app.logger.info('OCR : '+resultEasyOcr if resultEasyOcr is not None else '-')
 		try:
 			getStrDist = getStringDistance(resultEasyOcr) if resultEasyOcr is not None or len(resultEasyOcr) == 0 else None
@@ -59,17 +62,20 @@ def processing(image, imageName, posCam):
 			getStrDist = None
 		checked = checkDigitNum(getStrDist) if resultEasyOcr is not None else None
 		resultContainerNumber = getDictResult(posCam, imageName, conNum=resultEasyOcr, strDist=getStrDist, conLevel=confidenceEasyOcr, checkDig=checked)
+		
 		# tesseractOcr
 		# resultTesseract, cofidenceTesseract = tesseractOcr(image)
 		# resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]
 	else:
 		resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='vertical')
+		app.logger.info('OCR : '+resultEasyOcr if resultEasyOcr is not None else '-')
 		try:
 			getStrDist = getStringDistance(resultEasyOcr) if resultEasyOcr is not None or len(resultEasyOcr) == 0 else None
 		except TypeError:
 			getStrDist = None
 		checked = checkDigitNum(getStrDist) if getStrDist is not None else None
 		resultContainerNumber = getDictResult(posCam, imageName, conNum=resultEasyOcr, strDist=getStrDist, conLevel=confidenceEasyOcr, checkDig=checked)
+		
 		# tesseractOcr
 		# resultTesseract, cofidenceTesseract = tesseractOcr(image, psm=6)
 		# resultContainerNumber['tesseract'] = [resultTesseract, cofidenceTesseract]a
