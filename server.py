@@ -1,6 +1,7 @@
 import os
 import cv2
 import pytz
+import logging
 from glob import glob
 from app import processing
 from datetime import datetime
@@ -8,7 +9,22 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
-IST = pytz.timezone('Asia/Jakarta')
+
+IST 	= pytz.timezone('Asia/Jakarta')
+date 	= datetime.now(IST)
+year 	= str(date.year)
+month 	= "0"+str(date.month) if len(str(date.month)) == 1 else str(date.month)
+day 	= "0"+str(date.day) if len(str(date.day)) == 1 else str(date.day)
+
+PATH_LOG = os.path.join('images/{year}/{month}/{day}/loging_{day}-{month}-{year}.log'
+						.format(year=year, month=month, day=day))
+try:
+	log = logging.getLogger('werkzeug')
+	log.setLevel(logging.ERROR)
+	logging.basicConfig(filename=PATH_LOG, level=logging.ERROR,
+						format=f'%(asctime)s %(levelname)s : %(message)s')
+except FileNotFoundError as error:
+	None
 
 def getPathImage(truckId):
 	'''
@@ -25,8 +41,11 @@ def getPathImage(truckId):
 def process(img, posCam):
 	imageName = os.path.split(img)[-1]
 	image = cv2.imread(img)
+	app.logger.info('Processing image : {imgName} '
+					'Possition Camera : {poscam}'
+					.format(imgName=imageName, poscam=posCam))
 	result = processing(image, imageName, posCam)
-	return result if type(result) == dict else {'error': result}
+	return result if type(result) == dict else None
 
 def switchProcess(pathImg, posCam):
 	if posCam == '10':
@@ -41,19 +60,23 @@ def switchProcess(pathImg, posCam):
 def getImageForProcessing(truckId):
 	imgPath = getPathImage(truckId)
 	resultArr = []
+	resultArrNull = []
 	for img in glob(imgPath):
 		imgName = os.path.split(img)[-1]
 		posCam = imgName[17:19]
+		app.logger.info('Image found : '+imgName)
 		result = switchProcess(img, posCam)
 		if result is not None:
 			if result.get('Container number'):
 				resultArr.append(result)
+			else:
+				resultArrNull.append(result)
 	if len(resultArr) != 0:
 		confArr = [i['Confidence level'] for i in resultArr]
 		keyMax = max(range(len(confArr)), key=confArr.__getitem__)
 		return resultArr[keyMax]
 	else:
-		return None
+		return resultArrNull[0]
 
 @app.route("/truckid", methods=["POST"])
 def postTruckId():
@@ -66,14 +89,18 @@ def postTruckId():
 				return jsonify({"error": "String image name not valid"}), 400
 				
 			# Processing container 
+			app.logger.info('Truck id : '+truckId)
 			result = getImageForProcessing(truckId)
 			if result is None:
-				return jsonify({"error": "No container number"}), 400
+				return jsonify({"messege":"Error no container number", "time": datetime.now(IST), "results": result}), 400
 			elif len(result) == 0:
-				return jsonify({"error": "No image in path"}), 400
-			return jsonify({"success":"", "time": datetime.now(IST), "results": result})
+				return jsonify({"message": "Error no image in path", "time": datetime.now(IST), "results": result}), 400
+			return jsonify({"message":"Success", "time": datetime.now(IST), "results": result})
 		except KeyError as e:
-			return jsonify({"error": "Invalid mame"}), 400
+			return jsonify({"message": "Error invalid keyName", "time": datetime.now(IST)}), 400
 
 if __name__=='__main__':
-	app.run(host ='0.0.0.0', port = 5003, debug = True)
+	host = '0.0.0.0'
+	port = 5003
+	print("Server running in http://{host}:{port}".format(host=host, port=port))
+	app.run(host=host, port=port, debug=True)
