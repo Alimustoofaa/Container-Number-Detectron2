@@ -56,6 +56,7 @@ def processing(image, imageName, posCam):
 	if height < width:
 		resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='horizontal')
 		app.logger.info('OCR : '+resultEasyOcr if resultEasyOcr is not None else '-')
+		app.logger.info('Conf : '+str(confidenceEasyOcr) if confidenceEasyOcr is not None else '-')
 		try:
 			getStrDist = getStringDistance(resultEasyOcr) if resultEasyOcr is not None or len(resultEasyOcr) == 0 else None
 		except TypeError:
@@ -69,6 +70,7 @@ def processing(image, imageName, posCam):
 	else:
 		resultEasyOcr, confidenceEasyOcr = ocrEasyOcr(image, rotate='vertical')
 		app.logger.info('OCR : '+resultEasyOcr if resultEasyOcr is not None else '-')
+		app.logger.info('Conf : '+str(confidenceEasyOcr) if confidenceEasyOcr is not None else '-')
 		try:
 			getStrDist = getStringDistance(resultEasyOcr) if resultEasyOcr is not None or len(resultEasyOcr) == 0 else None
 		except TypeError:
