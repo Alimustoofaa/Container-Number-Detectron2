@@ -67,6 +67,7 @@ def filterText(textArr):
     None
 
   # Calculate Confidence
+<<<<<<< HEAD
   try:
     avgConf = round((sum(confidenceArr)/len(confidenceArr)), 2)
     containerNumber = ''.join(str(e) for e in containerNumberArr)
@@ -76,4 +77,8 @@ def filterText(textArr):
     avgConf = textArr[keyMax][1]
     containerNumber = textArr[keyMax][0]
 
+=======
+  avgConf = round((sum(confidenceArr)/len(confidenceArr)), 2)
+  containerNumber = ''.join(str(e) for e in containerNumberArr)
+>>>>>>> b75979ed493d7f8bfa25ba2180190d6f3a72020f
   return containerNumber, avgConf

@@ -28,16 +28,24 @@ category = ABCDEFGHJKLMNOPQRSTUVWXYZ
 scalePercent = 200
 
 [Min Contrast]
+<<<<<<< HEAD
 minContrast = 100
+=======
+minContrast = 13
+>>>>>>> b75979ed493d7f8bfa25ba2180190d6f3a72020f
 
 [Min Confidence]
 minConfidence = 0.2
 
 [Path Image]
+<<<<<<< HEAD
 pathImage = /home/ali/Desktop/Halotec/Container-Number
 
 [Number Gate]
 gate = 8
+=======
+pathImage = /home/prio/Downloads/HALOTEC
+>>>>>>> b75979ed493d7f8bfa25ba2180190d6f3a72020f
 
 [Data Container]
 nameFile = data_container.csv
