@@ -67,6 +67,13 @@ def filterText(textArr):
     None
 
   # Calculate Confidence
-  avgConf = round((sum(confidenceArr)/len(confidenceArr)), 2)
-  containerNumber = ''.join(str(e) for e in containerNumberArr)
+  try:
+    avgConf = round((sum(confidenceArr)/len(confidenceArr)), 2)
+    containerNumber = ''.join(str(e) for e in containerNumberArr)
+  except ZeroDivisionError:
+    textArr1 = [[len(word), conf] for word, conf in textArr]
+    keyMax = max(range(len(textArr1)), key=textArr1.__getitem__)
+    avgConf = textArr[keyMax][1]
+    containerNumber = textArr[keyMax][0]
+
   return containerNumber, avgConf
