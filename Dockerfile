@@ -24,23 +24,13 @@ RUN python -m pip install git+git://github.com/jaidedai/easyocr.git
 RUN apt-get update && apt-get -y --no-install-recommends install tesseract-ocr 
 RUN python -m pip install pytesseract
 
-<<<<<<< HEAD
 RUN python -m pip install configparser numpy flask strsim python-stdnum pytz
-=======
-RUN python -m pip install configparser numpy flask strsim python-stdnum
->>>>>>> b75979ed493d7f8bfa25ba2180190d6f3a72020f
 
 COPY . /app
 WORKDIR /app
 
-<<<<<<< HEAD
 RUN mkdir /images
 
 EXPOSE 5003
 ENTRYPOINT [ "python3" ] 
 CMD [ "server.py"]
-=======
-EXPOSE 5002
-ENTRYPOINT [ "python3" ] 
-CMD [ "server.py"]
->>>>>>> b75979ed493d7f8bfa25ba2180190d6f3a72020f
