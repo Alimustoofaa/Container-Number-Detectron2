@@ -67,7 +67,7 @@ def getImageForProcessing(truckId):
 		app.logger.info('Image found : '+imgName)
 		result = switchProcess(img, posCam)
 		if result is not None:
-			if result.get('Container number') and len(result.get('Container number')) > 1:
+			if result.get('Container number') and len(result.get('Container number')) > 5:
 				resultArr.append(result)
 			else:
 				resultArrNull.append(result)
