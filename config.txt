@@ -28,7 +28,7 @@ category = ABCDEFGHJKLMNOPQRSTUVWXYZ
 scalePercent = 200
 
 [Min Contrast]
-minContrast = 13
+minContrast = 100
 
 [Min Confidence]
 minConfidence = 0.2
