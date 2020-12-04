@@ -11,10 +11,10 @@ allowList = '0123456789ABCDEFGHJKLMNOPQRSTUVWXYZ'
 detail = 1
 decoder = wordbeamsearch
 beamWidth = 6
-batchSize = 1
-textThreshold = 0.8
-lowText = 0.5
-linkThreshold = 0.8
+batchSize = 10
+textThreshold = 0.4
+lowText = 0.4
+linkThreshold = 0.9
 slopeThs = 0.2
 minSize = 1
 
@@ -25,7 +25,7 @@ whitelist = 0123456789ABCDEFGHJKLMNOPQRSTUVWXYZ
 category = ABCDEFGHJKLMNOPQRSTUVWXYZ
 
 [Resize Image]
-scalePercent = 200
+scalePercent = 250
 
 [Min Contrast]
 minContrast = 100
