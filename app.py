@@ -40,8 +40,12 @@ def processing(image, imageName, posCam):
 	from server import app
 	
 	resultContainerNumber = {}
-	result = predicContainerNumber(image)
-	imageCropped = cropImage(result, image) if result != '' else image.copy()
+	# condition position camera, if position camera = 06 skip prediction
+	if posCam == '02':
+		imageCropped = image.copy()
+	else:
+		result = predicContainerNumber(image)
+		imageCropped = cropImage(result, image) if result != '' else image.copy()
 	resizedImage = resizeImage(imageCropped) if imageCropped.shape[1] < scalePercent else imageCropped.copy()
 	contrast = getContrast(resizedImage)
 	if contrast > minContrast:
