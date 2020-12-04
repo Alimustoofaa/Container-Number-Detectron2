@@ -70,16 +70,18 @@ class EasyOcr():
         return result
 
 def ocrEasyOcr(image, rotate='horizontal'):
-    if rotate == 'horizontal':
-        result = EasyOcr.processOcrHor(image)
-    elif rotate == 'vertical':
+    if rotate == 'vertical':
         result = EasyOcr.processOcrVer(image)
     else:
-        result = EasyOcr.processOcr(image)
+        result = EasyOcr.processOcrHor(image)
 
     if len(result) != 0:
         textConfArr = EasyOcr.extractText(result)
         try:
+            # if rotate == 'vertical':
+            #     containerNumber = ''.join([e for e,_ in textConfArr])
+            #     confidenceLevel = sum(i for _, i in textConfArr) / len(textConfArr)
+            # else:
             containerNumber, confidenceLevel = filterText(textConfArr)
         except ZeroDivisionError:
             containerNumber = ''.join([str(text) for text, conf in textConfArr])
